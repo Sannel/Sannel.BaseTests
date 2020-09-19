@@ -18,18 +18,24 @@ namespace Sannel.House.Tests
 	public abstract class BaseTests : IDisposable
 	{
 		private ILoggerFactory loggerFactory;
-		private SqliteConnection connection;
+		private
+#if NETSTANDARD2_0 || NETCOREAPP2_1
+			SqliteConnection
+#else
+			SqliteConnection?
+#endif
+			connection;
+
+		public BaseTests() 
+			=> loggerFactory = new LoggerFactory();
 
 		/// <summary>
 		/// Creates the logger.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public ILogger<T> CreateLogger<T>()
-		{
-			var l = loggerFactory ?? (loggerFactory = new LoggerFactory());
-			return l.CreateLogger<T>();
-		}
+		public ILogger<T> CreateLogger<T>() 
+			=> loggerFactory.CreateLogger<T>();
 
 		/// <summary>
 		/// Opens the connection be sure to dispose it.
