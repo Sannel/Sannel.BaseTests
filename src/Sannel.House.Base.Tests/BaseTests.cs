@@ -1,4 +1,4 @@
-/* Copyright 2019 Sannel Software, L.L.C.
+/* Copyright 2019-2020 Sannel Software, L.L.C.
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -8,16 +8,22 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.*/
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Sannel.House.Tests
+namespace Sannel.House.Base.Tests
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="System.IDisposable" />
 	public abstract class BaseTests : IDisposable
 	{
-		private ILoggerFactory loggerFactory;
+		public static readonly Random Random = new Random();
+		private readonly ILoggerFactory loggerFactory;
 		private
 #if NETSTANDARD2_0 || NETCOREAPP2_1
 			SqliteConnection
@@ -26,6 +32,9 @@ namespace Sannel.House.Tests
 #endif
 			connection;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BaseTests"/> class.
+		/// </summary>
 		public BaseTests() 
 			=> loggerFactory = new LoggerFactory();
 
@@ -43,7 +52,7 @@ namespace Sannel.House.Tests
 		/// <returns></returns>
 		protected SqliteConnection OpenConnection()
 		{
-			if (connection == null)
+			if (connection is null)
 			{
 				connection = new SqliteConnection("DataSource=:memory:");
 				connection.Open();
